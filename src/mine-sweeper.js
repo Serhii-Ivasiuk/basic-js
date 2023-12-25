@@ -23,11 +23,59 @@ const { NotImplementedError } = require('../extensions/index.js');
  *  [1, 1, 1]
  * ]
  */
-function minesweeper(/* matrix */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function minesweeper(matrix) {
+    function getValuesAroundTarget(
+        targetRowIdx,
+        targetColumnIdx,
+        targetMatrix
+    ) {
+        const result = [];
+
+        const prevRow = targetRowIdx - 1;
+        const nextRow = targetRowIdx + 1;
+        const prevCol = targetColumnIdx - 1;
+        const nextCol = targetColumnIdx + 1;
+
+        targetMatrix.forEach((row, rowIdx) => {
+            row.forEach((item, colIdx) => {
+                if (
+                    (rowIdx === prevRow && colIdx === prevCol) ||
+                    (rowIdx === nextRow && colIdx === prevCol) ||
+                    (rowIdx === prevRow && colIdx === nextCol) ||
+                    (rowIdx === nextRow && colIdx === nextCol) ||
+                    (rowIdx === prevRow && colIdx === targetColumnIdx) ||
+                    (rowIdx === nextRow && colIdx === targetColumnIdx)
+                ) {
+                    result.push(item);
+                }
+
+                if (
+                    (colIdx === prevCol && rowIdx === targetRowIdx) ||
+                    (colIdx === nextCol && rowIdx === targetRowIdx)
+                ) {
+                    result.push(item);
+                }
+            });
+        });
+
+        return result;
+    }
+
+    const resultMatrix = matrix.map((row, rowIdx) => {
+        return row.map((_, colIdx) => {
+            const sumOfItemsAroundTarget = getValuesAroundTarget(
+                rowIdx,
+                colIdx,
+                matrix
+            ).reduce((sum, value) => (sum += value));
+
+            return sumOfItemsAroundTarget;
+        });
+    });
+
+    return resultMatrix;
 }
 
 module.exports = {
-  minesweeper
+    minesweeper,
 };
